@@ -10,9 +10,7 @@ This tool has currently only been tested with cadence sensors and a chest strap 
 It *should* work with other BLE cadence and heart sensors.
 However, some brands of heart sensor do appear to be locked down to their own apps.
 
-Please let me know if you have success with other brands of sensor. 
-I can add them to the list of known working devices. 
-If you have a device that doesn't work, I can try to add support for it.
+Please let me know how it goes with other brands of sensors. I can add sensors to this list and try to add support for brands that don't work.
 
 ## Loading into a Game
 
