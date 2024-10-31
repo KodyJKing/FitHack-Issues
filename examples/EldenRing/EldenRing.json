@@ -1,0 +1,68 @@
+{
+    "$schema": "mod.schema.json",
+    "version": "0.0.0",
+    "author": "Kody King",
+    "game": "Elden Ring",
+    "target": "eldenring.exe",
+    "script": "EldenRing.lua",
+    "variables": [
+        {
+            "name": "Health",
+            "dataType": "int32",
+            "pointer": "eldenring.exe 03B12E30 0 190 0 138",
+            "bounds": {
+                "min": 0,
+                "max": {
+                    "dataType": "int32",
+                    "pointer": "eldenring.exe 03B12E30 0 190 0 13C"
+                }
+            }
+        },
+        {
+            "name": "Mana",
+            "dataType": "int32",
+            "pointer": "eldenring.exe 03B12E30 0 190 0 148",
+            "effect": {
+                "add": 1.0
+            }
+        },
+        {
+            "name": "Stamina",
+            "dataType": "int32",
+            "pointer": "eldenring.exe 03B12E30 0 190 0 154",
+            "effect": {
+                "scaleIncreases": true, "scale": 1.0,
+                "add": 1.0
+            }
+        }
+    ],
+    // Consumable effects which can be purchased with points earned by exercising.
+    // Can be triggered from the overlay pause menu or using gamepad button combos (back + face-button).
+    // See EldenRing.lua for implementation details.
+    "effects": [
+        {
+            "name": "Stamina Burst",
+            "description": "Stamina regenerates faster for a short time.",
+            "cost": 400,
+            "duration": 20000
+        },
+        {
+            "name": "Health Burst",
+            "description": "Health regenerates faster for a short time.",
+            "cost": 600,
+            "duration": 10000
+        },
+        {
+            "name": "Mana Burst",
+            "description": "Trade health for mana for a short time.",
+            "cost": 400,
+            "duration": 10000
+        },
+        {
+            "name": "Berserk",
+            "description": "Gain extreme strength for a time.",
+            "cost": 600,
+            "duration": 20000
+        }
+    ]
+}

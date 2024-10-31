@@ -1,0 +1,67 @@
+{
+    "$schema": "mod.schema.json",
+    "version": "0.0.0",
+    "author": "Kody King",
+    "game": "Halo: Combat Evolved (Master Chief Collection)",
+    "target": "MCC-Win64-Shipping.exe",
+    // Hooks allow you to copy register values to a "definition". They are useful when there is no static pointer to a value.
+    "hooks": [
+        {
+            // Hook halo1.dll+C505D1 and write the rsi register to the player "definition".
+            "name": "player",
+            "instruction": "halo1.dll C505D1",
+            "copyRegister": "rsi"
+        },
+        {
+            // Hook halo1.dll+B76A30 and write the rdi register to the activeWeapon "definition".
+            "name": "activeWeapon",
+            "instruction": "halo1.dll B76A30",
+            "copyRegister": "rdi"
+        }
+    ],
+    "variables": [
+        {
+            "name": "Health",
+            "dataType": "float32",
+            // Multi-level pointers can reference "definitions" created elsewhere in the mod.
+            "pointer": "player 9C", // Equivalent to player+9C.
+            "bounds": { "min": 0, "max": 1 },
+            "effect": {
+                // Add 1% of the user's activity level to health every second.
+                "add": 0.01
+            }
+        },
+        {
+            "name": "Shield",
+            "dataType": "float32",
+            "pointer": "player A0",
+            "bounds": { "min": 0, "max": 2 },
+            "effect": {
+                "add": 0.01,
+                // Scale shield increases by 1x the user's activity level.
+                "scaleIncreases": true, "scale": 1,
+                "scaleCutoff": 0.2 // Don't scale changes larger than 20%.
+            }
+        },
+        {
+            "name": "Frags",
+            "dataType": "uint8",
+            "pointer": "player 2FC",
+            "bounds": { "min": 0, "max": 4 },
+            "effect": { "add": 0.05, "showMeter": true } // Show a progress meter for this variable in the HUD.
+        },
+        {
+            "name": "Plasmas",
+            "dataType": "uint8",
+            "pointer": "player 2FD",
+            "bounds": { "min": 0, "max": 4 },
+            "effect": { "add": 0.05, "showMeter": true }
+        },
+        {
+            "name": "Clip",
+            "dataType": "uint16",
+            "pointer": "activeWeapon 28A",
+            "effect": { "add": 0.05, "showMeter": true }
+        }
+    ]
+}

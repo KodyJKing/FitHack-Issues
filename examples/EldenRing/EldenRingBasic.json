@@ -1,0 +1,21 @@
+{
+    "$schema": "mod.schema.json",
+    "version": "0.0.0",
+    "author": "Kody King",
+    "game": "Elden Ring",
+    "target": "eldenring.exe", // FitHack will filter out mods that don't target the executable it's running in.
+    "variables": [
+        {
+            "name": "Stamina",
+            "dataType": "int32",
+            // A multi-level pointer to the stamina value. Equivalent to [[[eldenring.exe+03B12E30]+190]+0]+154.
+            "pointer": "eldenring.exe 03B12E30 0 190 0 154",
+            "effect": {
+                // Scale stamina gains by 2 times the user's activity level.
+                "scaleIncreases": true, "scale": 2.0,
+                // Add 1x the user's activity level to stamina every second.
+                "add": 1.0
+            }
+        }
+    ]
+}
