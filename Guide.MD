@@ -10,6 +10,10 @@ This tool has currently only been tested with cadence sensors and a chest strap 
 It *should* work with other BLE cadence and heart sensors.
 However, some brands of heart sensor do appear to be locked down to their own apps.
 
+Please let me know if you have success with other brands of sensor. 
+I can add them to the list of known working devices. 
+If you have a device that doesn't work, I can try to add support for it.
+
 ## Loading into a Game
 
 Launch your game and then select your it from FitHack's games tab. If you don't see your game, try checking `show all processes`.
