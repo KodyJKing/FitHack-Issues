@@ -1,5 +1,3 @@
-# Lua API
-
 ### `getModPaused() -> boolean`
 
 Returns whether the mod is paused.
@@ -166,17 +164,39 @@ See [MSDocs](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf
 ### `executeAtomic(callback: function)`
 
 Executes a callback atomically, suspending all other threads in the process.
-Useful when creating complex hooks to avoid race conditions.
+Useful when creating hooks to avoid race conditions.
 
 ### `executeAtomicEx(callback: function, regionStart: number, regionSize: number)`
 
 Executes a callback atomically, suspending all other threads in the process.
 Avoids suspending threads inside a specified region.
+```lua
+-- Example: (From utils.createJumpHook)
+executeAtomicEx(function()
+    writeBytes(hook.address, originalCode)
+    if hook.method == utils.hookMethods.int3 then
+        removeInt3Jump(hook.address)
+    end
+end, hook.address, hook.nopCount)
+```
 
 ### `hook(address: number, callback: function)`
 
 Sets a breakpoint that triggers a Lua callback when hit.
+Runs *before* the target instruction is executed.
 Lua function can read/write register globals EAX/RAX, EBX,RBX...
+```lua
+-- Example:
+hook(
+    -- game.exe+68C410 - 8B 41 44 - mov eax,[rcx+44] ; Read true health value.
+    -- game.exe+68C413 - C3       - ret 
+    resolvePointer("game.exe 68C413"),
+    function ()
+        if getModPaused() then return end
+        RAX = math.floor(RAX * getActivityLevelSmoothed() * 2)
+    end
+)
+```
 
 ### `hookEx(address: number, callback: function, type: number)`
 
@@ -190,6 +210,7 @@ Removes a breakpoint set by hook or hookEx.
 ### `installInt3Jump(from: number, to: number)`
 
 Installs an Int3 jump from the specified address to the target address.
+Uses a vectored exception handler to catch the Int3 exception and redirect execution.
 
 ### `removeInt3Jump(from: number)`
 
@@ -207,15 +228,30 @@ Disassembles the specified bytes as if they were at the specified runtime addres
 
 Relocates a single instruction at the specified address to a new address.
 Returns the relocated instruction bytes.
+Useful when dealing with relative addressing or jumps.
+This is not guaranteed to work for all instructions. Be sure to verify the relocated code.
 
 ### `relocateMultiple(address: number, newAddress: number, bytesToRelocate: number) -> table`
 
-Relocates atleast the specified number of bytes starting from the specified address to a new address.
+Relocates *atleast* the specified number of bytes starting from the specified address to a new address.
 Returns the relocated instruction bytes.
+Useful when dealing with relative addressing or jumps.
+This is not guaranteed to work for all instructions. Be sure to verify the relocated code.
+```lua
+-- Example:
+local relocatedBytes = relocateMultiple(runtimeAddress, tramplineAddress, bytesToRelocate)
+writeBytes(tramplineAddress, relocatedBytes)
+writeBytes(tramplineAddress + bytesToRelocate, yourAssembledCode)
+```
 
 ### `jump5Byte(from: number, to: number) -> table`
 
 Generates a 5-byte jump instruction from the specified address to the target address.
+```lua
+-- Example:
+local jumpBytes = jump5Byte(runtimeAddress, tramplineAddress)
+writeBytes(runtimeAddress, jumpBytes)
+```
 
 ### `jump14Byte(address: number) -> table`
 
@@ -223,8 +259,22 @@ Generates a 14-byte jump instruction to the specified address.
 
 ### `assembleToBytes(runtimeAddress: number, symbols: table, code: string) -> table`
 
-Assembles the specified code text into machine code bytes.
+Assembles code to machine code bytes. Returns the assembled bytes.
+Expects ASM code in Intel syntax.
 Accepts a table of symbols which can be referenced in the ASM code.
+```lua
+-- Example:
+local runtimeAddress = 0x400000
+local symbols = { pPlayer = allocateNear(runtimeAddress, 4, PAGE_READWRITE) }
+local code = [[
+   cmp [eax+0x10], 0
+   jne SKIP
+   mov [pPlayer], eax ; This is the player, save it.
+   SKIP:
+   ret
+]]
+local bytes = assembleToBytes(runtimeAddress, symbols, code)
+```
 
 ### `onTick(callback: fun(dtSeconds: number))`
 
@@ -245,3 +295,12 @@ Registers a callback for the onEffectEnd event.
 ### `onEffectTick(callback: fun(effectName: string, dtSeconds: number))`
 
 Registers a callback for the onEffectTick event.
+```lua
+-- Example:
+onEffectTick(function (effect, dt)
+    if effect == "Stamina Burst" then
+        addToVariable("Stamina", 200 * dt)
+    elseif effect == "Health Burst" then
+        addToVariable("Health", 100 * dt)
+    end
+end)
