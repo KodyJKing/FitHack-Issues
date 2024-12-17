@@ -20,7 +20,7 @@ If it works, you should see FitHack's overlay in the game. You may need to adjus
 
 ## The Overlay
 
-The overlay displays info about your activity level and various gameplay effects. From the overlay, you can also connect to mods and change settings.
+The overlay displays info about your activity level and various gameplay effects. From the overlay, you can also run mods and change settings.
 
 You can toggle the overlay by pressing `F1`.
 
