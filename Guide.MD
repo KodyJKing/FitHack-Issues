@@ -14,7 +14,7 @@ Please let me know how it goes with other brands of sensors. I can add sensors t
 
 ## Loading into a Game
 
-Launch your game and then select your it from FitHack's games tab. If you don't see your game, try checking `show all processes`.
+Launch your game and then select it from FitHack's games tab. If you don't see your game, try checking `show all processes`.
 
 If it works, you should see FitHack's overlay in the game. You may need to adjust the game's overlay settings. See the overlay troubleshooting section for more info.
 
